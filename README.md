@@ -5,14 +5,18 @@ Slack from your terminal. Send messages, read channels, browse threads, and sear
 ## Install
 
 ```bash
+# From PyPI (coming soon)
+uv tool install slacky
+
+# From source
+git clone https://github.com/asdf8601/slacky.git
+cd slacky
 uv tool install .
-# or for development:
-make dev
 ```
 
 ## Setup
 
-Export your Slack token (bot or user token):
+Export your Slack bot token:
 
 ```bash
 export SLACK_BOT_TOKEN=xoxb-your-bot-token
@@ -20,48 +24,64 @@ export SLACK_BOT_TOKEN=xoxb-your-bot-token
 
 ### Required Slack App Scopes
 
-**Bot token** (`xoxb-`):
-- `chat:write` — send messages
-- `channels:history`, `groups:history`, `im:history` — read messages
-- `channels:read`, `groups:read` — list channels
-- `users:read` — find users
-- `im:write` — open DMs
-
-**User token** (`xoxp-`): additionally supports:
-- `search:read` — search messages (requires user token)
+| Scope | Purpose |
+|-------|---------|
+| `chat:write` | Send messages |
+| `channels:history` | Read messages in public channels |
+| `groups:history` | Read messages in private channels |
+| `im:history` | Read DMs |
+| `channels:read` | List channels |
+| `groups:read` | List private channels |
+| `users:read` | Find users |
+| `im:write` | Open DMs |
+| `search:read` | Search messages (requires user token `xoxp-`) |
 
 ## Usage
 
+### Send messages
+
 ```bash
-# Send a message to a channel
 slacky send '#general' 'Hello from the terminal!'
-
-# Send a DM to a user
 slacky send '@johndoe' 'Hey, quick question...'
-
-# Reply to a thread
 slacky send '#general' 'Replying here' --thread 1234567890.123456
+```
 
-# Read messages from a channel
+### Read messages
+
+```bash
 slacky read '#general'
 slacky read '#general' --limit 50
-
-# Read DMs with a user
 slacky read '@johndoe'
+```
 
-# Read a thread
+### Read threads
+
+```bash
+# Using a Slack URL (copy from Slack)
+slacky thread https://myteam.slack.com/archives/C123ABC/p1234567890123456
+
+# Using channel + timestamp
 slacky thread '#general' 1234567890.123456
+```
 
-# List/search channels
-slacky channels
-slacky channels deploy
+### Search channels
 
-# Search messages across channels
+```bash
+slacky channels                  # list all
+slacky channels deploy           # filter by name/topic/purpose
+```
+
+### Search messages
+
+```bash
 slacky search 'deployment failed'
 slacky search 'in:#alerts from:@bot after:2024-01-01'
 slacky search 'bug fix' --sort score --limit 10
+```
 
-# Find users
+### Find users
+
+```bash
 slacky users john
 ```
 
