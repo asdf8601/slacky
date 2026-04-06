@@ -164,7 +164,7 @@ class TestFindUser:
 class TestParseSlackUrl:
     def test_parse_valid_url(self) -> None:
         result = parse_slack_url(
-            "https://seedtag.slack.com/archives/C06KSHUFF61/p1773307094764839"
+            "https://acme.slack.com/archives/C06KSHUFF61/p1773307094764839"
         )
         assert result == ("C06KSHUFF61", "1773307094.764839")
 
