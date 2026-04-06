@@ -34,7 +34,7 @@ export SLACK_BOT_TOKEN=xoxb-your-bot-token
 | `groups:read` | List private channels |
 | `users:read` | Find users |
 | `im:write` | Open DMs |
-| `search:read` | Search messages (requires user token `xoxp-`) |
+| `search:read` | Search messages |
 
 ## Usage
 
