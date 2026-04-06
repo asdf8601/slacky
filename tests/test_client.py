@@ -164,9 +164,9 @@ class TestFindUser:
 class TestParseSlackUrl:
     def test_parse_valid_url(self) -> None:
         result = parse_slack_url(
-            "https://acme.slack.com/archives/C06KSHUFF61/p1773307094764839"
+            "https://acme.slack.com/archives/CABC123DEF/p1700000000123456"
         )
-        assert result == ("C06KSHUFF61", "1773307094.764839")
+        assert result == ("CABC123DEF", "1700000000.123456")
 
     def test_parse_invalid_url(self) -> None:
         assert parse_slack_url("not-a-url") is None
