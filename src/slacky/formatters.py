@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from slackli.client import Channel, Message, SearchResult, User
+from slacky.client import Channel, Message, SearchResult, User
 
 console = Console()
 

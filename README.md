@@ -1,4 +1,4 @@
-# slackli
+# slacky
 
 Slack from your terminal. Send messages, read channels, browse threads, and search — all from the CLI.
 
@@ -34,35 +34,35 @@ export SLACK_BOT_TOKEN=xoxb-your-bot-token
 
 ```bash
 # Send a message to a channel
-slackli send '#general' 'Hello from the terminal!'
+slacky send '#general' 'Hello from the terminal!'
 
 # Send a DM to a user
-slackli send '@johndoe' 'Hey, quick question...'
+slacky send '@johndoe' 'Hey, quick question...'
 
 # Reply to a thread
-slackli send '#general' 'Replying here' --thread 1234567890.123456
+slacky send '#general' 'Replying here' --thread 1234567890.123456
 
 # Read messages from a channel
-slackli read '#general'
-slackli read '#general' --limit 50
+slacky read '#general'
+slacky read '#general' --limit 50
 
 # Read DMs with a user
-slackli read '@johndoe'
+slacky read '@johndoe'
 
 # Read a thread
-slackli thread '#general' 1234567890.123456
+slacky thread '#general' 1234567890.123456
 
 # List/search channels
-slackli channels
-slackli channels deploy
+slacky channels
+slacky channels deploy
 
 # Search messages across channels
-slackli search 'deployment failed'
-slackli search 'in:#alerts from:@bot after:2024-01-01'
-slackli search 'bug fix' --sort score --limit 10
+slacky search 'deployment failed'
+slacky search 'in:#alerts from:@bot after:2024-01-01'
+slacky search 'bug fix' --sort score --limit 10
 
 # Find users
-slackli users john
+slacky users john
 ```
 
 ## Development

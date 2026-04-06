@@ -5,8 +5,8 @@ import sys
 
 import click
 
-from slackli.client import SlackClient, SlackError, parse_slack_url
-from slackli.formatters import (
+from slacky.client import SlackClient, SlackError, parse_slack_url
+from slacky.formatters import (
     print_channels,
     print_error,
     print_messages,
@@ -28,9 +28,9 @@ def _get_client() -> SlackClient:
 
 
 @click.group()
-@click.version_option(package_name="slackli")
+@click.version_option(package_name="slacky")
 def main() -> None:
-    """slackli — Slack from your terminal."""
+    """slacky — Slack from your terminal."""
 
 
 # --- Send ---

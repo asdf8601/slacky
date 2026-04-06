@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from slackli.client import (
+from slacky.client import (
     Message,
     SlackClient,
     SlackError,

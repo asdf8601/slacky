@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import time
 from dataclasses import dataclass
 
 import httpx
@@ -86,15 +87,22 @@ class SlackClient:
         json: dict | None = None,
         params: dict | None = None,
     ) -> dict:
-        if post:
-            resp = self._http.post(f"/{method}", json=json)
-        else:
-            resp = self._http.get(f"/{method}", params=params)
+        for _ in range(5):
+            if post:
+                resp = self._http.post(f"/{method}", json=json)
+            else:
+                resp = self._http.get(f"/{method}", params=params)
+            if resp.status_code == 429:
+                retry_after = int(resp.headers.get("Retry-After", 3))
+                time.sleep(retry_after)
+                continue
+            resp.raise_for_status()
+            data = resp.json()
+            if not data.get("ok"):
+                raise SlackError(method, data.get("error", "unknown"))
+            return data
         resp.raise_for_status()
-        data = resp.json()
-        if not data.get("ok"):
-            raise SlackError(method, data.get("error", "unknown"))
-        return data
+        return {}  # unreachable
 
     # --- Messages ---
 
@@ -184,27 +192,33 @@ class SlackClient:
     def list_channels(
         self,
         query: str | None = None,
-        limit: int = 100,
+        limit: int = 1000,
     ) -> list[Channel]:
-        data = self._call(
-            "conversations.list",
-            params={
-                "limit": limit,
+        channels: list[Channel] = []
+        cursor: str | None = None
+        while True:
+            params: dict = {
+                "limit": min(limit, 1000),
                 "types": "public_channel,private_channel",
                 "exclude_archived": "true",
-            },
-        )
-        channels = [
-            Channel(
-                id=c["id"],
-                name=c.get("name", ""),
-                topic=c.get("topic", {}).get("value", ""),
-                purpose=c.get("purpose", {}).get("value", ""),
-                is_member=c.get("is_member", False),
-                num_members=c.get("num_members", 0),
-            )
-            for c in data.get("channels", [])
-        ]
+            }
+            if cursor:
+                params["cursor"] = cursor
+            data = self._call("conversations.list", params=params)
+            for c in data.get("channels", []):
+                channels.append(
+                    Channel(
+                        id=c["id"],
+                        name=c.get("name", ""),
+                        topic=c.get("topic", {}).get("value", ""),
+                        purpose=c.get("purpose", {}).get("value", ""),
+                        is_member=c.get("is_member", False),
+                        num_members=c.get("num_members", 0),
+                    )
+                )
+            cursor = data.get("response_metadata", {}).get("next_cursor")
+            if not cursor:
+                break
         if query:
             q = query.lower()
             channels = [
