@@ -8,6 +8,7 @@ from slackli.client import (
     Message,
     SlackClient,
     SlackError,
+    parse_slack_url,
 )
 
 
@@ -158,6 +159,26 @@ class TestFindUser:
             users = client.find_user("john")
             assert len(users) == 1
             assert users[0].name == "jdoe"
+
+
+class TestParseSlackUrl:
+    def test_parse_valid_url(self) -> None:
+        result = parse_slack_url(
+            "https://seedtag.slack.com/archives/C06KSHUFF61/p1773307094764839"
+        )
+        assert result == ("C06KSHUFF61", "1773307094.764839")
+
+    def test_parse_invalid_url(self) -> None:
+        assert parse_slack_url("not-a-url") is None
+        assert parse_slack_url("https://google.com") is None
+
+    def test_parse_channel_id(self) -> None:
+        result = parse_slack_url(
+            "https://team.slack.com/archives/C123ABC/p1234567890123456"
+        )
+        assert result is not None
+        assert result[0] == "C123ABC"
+        assert result[1] == "1234567890.123456"
 
 
 class TestSlackError:

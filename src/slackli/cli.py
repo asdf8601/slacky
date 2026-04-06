@@ -5,7 +5,7 @@ import sys
 
 import click
 
-from slackli.client import SlackClient, SlackError
+from slackli.client import SlackClient, SlackError, parse_slack_url
 from slackli.formatters import (
     print_channels,
     print_error,
@@ -105,25 +105,43 @@ def read(target: str, limit: int) -> None:
 
 
 @main.command()
-@click.argument("channel")
-@click.argument("thread_ts")
+@click.argument("url_or_channel")
+@click.argument("thread_ts", required=False)
 @click.option(
     "--limit",
     "-n",
     default=50,
     help="Number of replies to fetch.",
 )
-def thread(channel: str, thread_ts: str, limit: int) -> None:
+def thread(
+    url_or_channel: str,
+    thread_ts: str | None,
+    limit: int,
+) -> None:
     """Read a thread's replies.
 
-    CHANNEL can be #channel-name or a channel ID.
-    THREAD_TS is the timestamp of the parent message.
+    Accepts a Slack URL or CHANNEL + THREAD_TS.
+
+    \b
+    Examples:
+      slackli thread https://workspace.slack.com/archives/C123/p456
+      slackli thread '#general' 1234567890.123456
     """
+    parsed = parse_slack_url(url_or_channel)
+    if parsed:
+        channel_id, ts = parsed
+    elif thread_ts:
+        channel_id = url_or_channel
+        ts = thread_ts
+    else:
+        print_error("Provide a Slack URL or both CHANNEL and THREAD_TS.")
+        return
+
     client = _get_client()
     try:
-        channel_id = client.resolve_channel(channel)
-        messages = client.read_thread(channel_id, thread_ts, limit=limit)
-        print_messages(messages, title=f"Thread {thread_ts}")
+        channel_id = client.resolve_channel(channel_id)
+        messages = client.read_thread(channel_id, ts, limit=limit)
+        print_messages(messages, title=f"Thread {ts}")
     except SlackError as e:
         print_error(str(e))
 

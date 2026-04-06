@@ -1,10 +1,30 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 import httpx
 
 BASE_URL = "https://slack.com/api"
+
+_SLACK_URL_RE = re.compile(
+    r"https?://[^/]+\.slack\.com/archives/([A-Z0-9]+)/p(\d+)"
+)
+
+
+def parse_slack_url(url: str) -> tuple[str, str] | None:
+    """Parse a Slack message URL into (channel_id, thread_ts).
+
+    URL format: https://<workspace>.slack.com/archives/<channel>/p<ts>
+    The timestamp has no dot — insert '.' before the last 6 digits.
+    """
+    m = _SLACK_URL_RE.match(url)
+    if not m:
+        return None
+    channel_id = m.group(1)
+    raw_ts = m.group(2)
+    ts = f"{raw_ts[:-6]}.{raw_ts[-6:]}"
+    return channel_id, ts
 
 
 @dataclass
