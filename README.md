@@ -15,9 +15,7 @@ make dev
 Export your Slack token (bot or user token):
 
 ```bash
-export SLACK_TOKEN=xoxb-your-bot-token
-# or
-export SLACK_TOKEN=xoxp-your-user-token
+export SLACK_BOT_TOKEN=xoxb-your-bot-token
 ```
 
 ### Required Slack App Scopes

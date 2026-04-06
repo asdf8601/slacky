@@ -17,11 +17,11 @@ from slackli.formatters import (
 
 
 def _get_client() -> SlackClient:
-    token = os.environ.get("SLACK_TOKEN")
+    token = os.environ.get("SLACK_BOT_TOKEN")
     if not token:
         print_error(
-            "SLACK_TOKEN not set. "
-            "Export a bot or user token: export SLACK_TOKEN=xoxb-..."
+            "SLACK_BOT_TOKEN not set. "
+            "Export your bot token: export SLACK_BOT_TOKEN=xoxb-..."
         )
         sys.exit(1)
     return SlackClient(token)
